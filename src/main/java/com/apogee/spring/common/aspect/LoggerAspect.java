@@ -13,7 +13,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -32,7 +31,6 @@ import static com.apogee.spring.common.constant.CommonConstant.REQUEST_ID;
 
 @Log4j2
 @Aspect
-@Component
 public class LoggerAspect {
 
     @Around("within(com.apogee.*.controllers..*)")
