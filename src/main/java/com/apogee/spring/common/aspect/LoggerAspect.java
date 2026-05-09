@@ -29,11 +29,44 @@ import static com.apogee.spring.common.aspect.AOPUtilities.getQueryParams;
 import static com.apogee.spring.common.constant.CommonConstant.NULL_STRING;
 import static com.apogee.spring.common.constant.CommonConstant.REQUEST_ID;
 
+/**
+ * AOP aspect for centralized HTTP request and response logging.
+ * <p>
+ * This aspect intercepts all method calls within the configured packages and logs:
+ * <ul>
+ *   <li>Request metadata: URL, HTTP method, headers, query parameters, path variables</li>
+ *   <li>Request body for POST/PUT requests</li>
+ *   <li>Response body and status code</li>
+ *   <li>Execution duration in milliseconds</li>
+ *   <li>Request ID from MDC for correlation tracking</li>
+ * </ul>
+ * </p>
+ * <p>
+ * All logging is done through Log4j2 with structured logging support for JSON output.
+ * </p>
+ * <p>
+ * Pointcut: Matches all methods within controller packages: {@code within(com.apogee.*.controllers..*)}</p>
+ *
+ * @see org.aspectj.lang.annotation.Aspect
+ * @see org.aspectj.lang.ProceedingJoinPoint
+ * @see org.slf4j.MDC
+ */
 @Log4j2
 @Aspect
 public class LoggerAspect {
 
-    @Around("within(com.apogee.*.controllers..*)")
+    /**
+     * Intercepts HTTP requests and responses for logging.
+     * <p>
+     * Captures incoming request details, delegates to the target method,
+     * logs the response, and handles any exceptions that occur during execution.
+     * </p>
+     *
+     * @param joinPoint the join point representing the intercepted method call
+     * @return the method's return value
+     * @throws Throwable if the target method throws an exception
+     */
+    @Around("within(com.apogee.*.controllers...*)")
     public Object logApi(ProceedingJoinPoint joinPoint) throws Throwable {
 
         long start = System.currentTimeMillis();
@@ -74,7 +107,7 @@ public class LoggerAspect {
         } catch (Throwable ex) {
 
             message
-                    .with(CommonConstant.STATUS, String.valueOf(HttpStatus.OK.value()))
+                    .with(CommonConstant.STATUS, String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                     .with(CommonConstant.DURATION_MS, String.valueOf(System.currentTimeMillis() - start))
                     .with(CommonConstant.EXCEPTION_MESSAGE,
                             ex.getMessage() != null ? ex.getMessage() : NULL_STRING);
@@ -84,14 +117,32 @@ public class LoggerAspect {
         }
     }
 
+    /**
+     * Extracts the request body from method parameters if annotated with {@code @RequestBody}.
+     * <p>
+     * Performs null-safety checks and returns the JSON-serialized body or null if not found.
+     * </p>
+     *
+     * @param joinPoint the join point containing method parameters and annotations
+     * @return the request body as JSON string, or null if not found or if joinPoint is invalid
+     */
     private String getRequestBody(JoinPoint joinPoint) {
+        if (joinPoint == null) {
+            return null;
+        }
 
         Object[] args = joinPoint.getArgs();
+        if (args == null || args.length == 0) {
+            return null;
+        }
 
+        Annotation[][] annotations = getParameterizedAnnotations(joinPoint);
         for (int i = 0; i < args.length; i++) {
-            for (Annotation annotation : getParameterizedAnnotations(joinPoint)[i]) {
-                if (annotation instanceof RequestBody) {
-                    return formatAsJsonObject(args[i]);
+            if (i < annotations.length) {
+                for (Annotation annotation : annotations[i]) {
+                    if (annotation instanceof RequestBody) {
+                        return formatAsJsonObject(args[i]);
+                    }
                 }
             }
         }
@@ -99,6 +150,15 @@ public class LoggerAspect {
         return null;
     }
 
+    /**
+     * Extracts parameter annotations from the intercepted method.
+     * <p>
+     * Uses reflection to obtain the method signature and its parameter annotations.
+     * </p>
+     *
+     * @param joinPoint the join point representing the intercepted method
+     * @return a 2D array of annotations where each row corresponds to a method parameter
+     */
     private Annotation[][] getParameterizedAnnotations(JoinPoint joinPoint) {
 
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();

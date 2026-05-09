@@ -6,67 +6,83 @@
   <groupId>com.apogee.spring.common</groupId>
   <artifactId>spring-common</artifactId>
   <version>0.0.1</version>
-
   <packaging>jar</packaging>
 
   <name>spring-common</name>
+  <description>Common utilities library for Spring Boot microservices: AOP logging, global exception handling, and standardized responses</description>
+  <url>https://github.com/apogee/spring-common</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.release>21</maven.compiler.release>
+    <!-- Spring Framework versions -->
     <spring.version>6.1.21</spring.version>
-    <spring-web.version>${spring.version}</spring-web.version>
-    <spring-context.version>${spring.version}</spring-context.version>
-    <spring-aop.version>${spring.version}</spring-aop.version>
-    <spring-webmvc.version>${spring.version}</spring-webmvc.version>
-    <spring-boot-autoconfigure.version>3.2.5</spring-boot-autoconfigure.version>
+    <spring-boot.version>3.2.5</spring-boot.version>
+    <!-- Core dependencies -->
     <aspectjweaver.version>1.9.22.1</aspectjweaver.version>
     <lombok.version>1.18.30</lombok.version>
+    <jakarta-servlet-api.version>6.0.0</jakarta-servlet-api.version>
+    <!-- Logging dependencies -->
     <log4j-api.version>2.25.4</log4j-api.version>
     <log4j-core.version>2.25.4</log4j-core.version>
     <log4j-layout-template-json.version>2.25.4</log4j-layout-template-json.version>
     <slf4j.version>2.0.9</slf4j.version>
+    <!-- JSON processing -->
     <jackson-databind.version>2.17.2</jackson-databind.version>
+    <!-- Common utilities -->
+    <common-utils.version>0.0.1</common-utils.version>
+    <!-- Test dependencies -->
     <junit-jupiter.version>5.10.0</junit-jupiter.version>
     <mockito-core.version>5.7.0</mockito-core.version>
-    <common-utils.version>0.0.1</common-utils.version>
-    <jakarta-servlet-api.version>6.0.0</jakarta-servlet-api.version>
+    <!-- Plugin versions -->
     <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
     <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
+    <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+    <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
     <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
   </properties>
 
   <dependencies>
-
+    <!-- Spring Framework - Core -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
-      <version>${spring-web.version}</version>
+      <version>${spring.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>${spring-context.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-autoconfigure</artifactId>
-      <version>${spring-boot-autoconfigure.version}</version>
+      <version>${spring.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
-      <version>${spring-webmvc.version}</version>
+      <version>${spring.version}</version>
       <scope>provided</scope>
     </dependency>
 
+    <!-- Spring Boot Auto-Configuration -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure</artifactId>
+      <version>${spring-boot.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <version>${spring-boot.version}</version>
+      <scope>provided</scope>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- AspectJ - AOP Support -->
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjweaver</artifactId>
@@ -74,16 +90,24 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- Lombok -->
+    <!-- Lombok - Code Generation -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <optional>true</optional>
       <version>${lombok.version}</version>
+      <scope>provided</scope>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- Jakarta Servlet API -->
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>${jakarta-servlet-api.version}</version>
       <scope>provided</scope>
     </dependency>
 
-    <!-- Log4j2 for logging -->
+    <!-- Logging - Log4j2 -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
@@ -105,6 +129,7 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- Logging - SLF4J (MDC Support) -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -112,6 +137,7 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- JSON Processing -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
@@ -119,21 +145,7 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- Test dependencies -->
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <version>${junit-jupiter.version}</version>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>${mockito-core.version}</version>
-      <scope>test</scope>
-    </dependency>
-
+    <!-- Apogee Common Utils -->
     <dependency>
       <groupId>com.apogee.common</groupId>
       <artifactId>common-utils</artifactId>
@@ -141,18 +153,25 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- Test Dependencies -->
     <dependency>
-      <groupId>jakarta.servlet</groupId>
-      <artifactId>jakarta.servlet-api</artifactId>
-      <version>${jakarta-servlet-api.version}</version>
-      <scope>provided</scope>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit-jupiter.version}</version>
+      <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${mockito-core.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
     <plugins>
-
+      <!-- Compiler Plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -165,36 +184,102 @@
               <artifactId>lombok</artifactId>
               <version>${lombok.version}</version>
             </path>
+            <path>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-configuration-processor</artifactId>
+              <version>${spring-boot.version}</version>
+            </path>
           </annotationProcessorPaths>
         </configuration>
       </plugin>
 
+      <!-- Surefire Plugin for running tests -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven-surefire-plugin.version}</version>
+        <configuration>
+          <includes>
+            <include>**/*Test.java</include>
+            <include>**/*Tests.java</include>
+          </includes>
+        </configuration>
       </plugin>
 
+      <!-- Source Plugin for generating sources JAR -->
       <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>${jacoco-maven-plugin.version}</version>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>${maven-source-plugin.version}</version>
         <executions>
           <execution>
+            <id>attach-sources</id>
             <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>report</id>
-            <phase>test</phase>
-            <goals>
-              <goal>report</goal>
+              <goal>jar</goal>
             </goals>
           </execution>
         </executions>
       </plugin>
 
+      <!-- Javadoc Plugin for generating documentation -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${maven-javadoc-plugin.version}</version>
+        <configuration>
+          <failOnError>false</failOnError>
+          <failOnWarnings>false</failOnWarnings>
+          <doclint>-missing</doclint>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
+
+    <!-- Optional coverage plugin (use with profile) -->
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco-maven-plugin.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>report</id>
+              <phase>test</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
+
+  <profiles>
+    <!-- Coverage Profile - Enable with: mvn clean test -Pcoverage -->
+    <profile>
+      <id>coverage</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
