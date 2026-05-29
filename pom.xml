@@ -5,7 +5,7 @@
 
   <groupId>com.apogee.spring.common</groupId>
   <artifactId>spring-common</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <packaging>jar</packaging>
 
   <name>spring-common</name>
@@ -282,4 +282,23 @@
       </build>
     </profile>
   </profiles>
+  
+  <distributionManagement>
+
+    <repository>
+      <id>nexus-releases</id>
+      <url>
+          http://localhost:8081/repository/maven-releases/
+      </url>
+    </repository>
+
+    <snapshotRepository>
+      <id>nexus-snapshots</id>
+      <url>
+          http://localhost:8081/repository/maven-snapshots/
+      </url>
+    </snapshotRepository>
+
+  </distributionManagement>
+
 </project>
