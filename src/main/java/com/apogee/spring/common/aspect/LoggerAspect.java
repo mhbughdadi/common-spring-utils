@@ -45,7 +45,8 @@ import static com.apogee.spring.common.constant.CommonConstant.REQUEST_ID;
  * All logging is done through Log4j2 with structured logging support for JSON output.
  * </p>
  * <p>
- * Pointcut: Matches all methods within controller packages: {@code within(com.apogee.*.controllers..*)}</p>
+ * Pointcut: Matches all public methods in any class ending with 'Controller' in the com.apogee package hierarchy,
+ * regardless of method arguments: {@code execution(public * com.apogee..*Controller.*(..))}</p>
  *
  * @see org.aspectj.lang.annotation.Aspect
  * @see org.aspectj.lang.ProceedingJoinPoint
@@ -66,8 +67,8 @@ public class LoggerAspect {
      * @return the method's return value
      * @throws Throwable if the target method throws an exception
      */
-    @Around("within(com.apogee.*.controllers...*)")
-    public Object logApi(ProceedingJoinPoint joinPoint) throws Throwable {
+     @Around("execution(public * com.apogee..*Controller.*(..))")
+     public Object logApi(ProceedingJoinPoint joinPoint) throws Throwable {
 
         long start = System.currentTimeMillis();
 
