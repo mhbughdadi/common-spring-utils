@@ -26,4 +26,5 @@ public final class CommonConstant {
     public static final String EXCEPTION_STACKTRACE = "exceptionStacktrace";
     public static final String STATUS = "status";
     public static final String DURATION_MS = "durationMs";
+    public static final String SERVICE_ID = "serviceId";
 }

@@ -78,6 +78,7 @@ public class LoggerAspect {
                         .getRequest();
 
         String requestId = MDC.get(REQUEST_ID);
+        String serviceId = MDC.get(CommonConstant.SERVICE_ID);
         String requestBody = getRequestBody(joinPoint);
 
         StringMapMessage message = new StringMapMessage()
@@ -88,7 +89,8 @@ public class LoggerAspect {
                 .with(CommonConstant.TIMESTAMP, Instant.now().toString())
                 .with(CommonConstant.PATH_VARIABLES, getPathVariables(request))
                 .with(CommonConstant.HEADERS, formatAsJsonObject(getHeaders(request)))
-                .with(REQUEST_ID, requestId != null ? requestId : NULL_STRING);
+                .with(REQUEST_ID, requestId != null ? requestId : NULL_STRING)
+                .with(CommonConstant.SERVICE_ID, serviceId != null ? serviceId : NULL_STRING);
 
         Object response = null;
         try {
